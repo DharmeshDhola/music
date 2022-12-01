@@ -491,7 +491,7 @@ body {
 
 .search-results {
   flex-direction: column;
-  padding: 3rem 0;
+  padding: 0 0 3rem;
   display: flex;
 }
 
@@ -545,7 +545,6 @@ body {
   height: 100%;
   width: 100%;
   opacity: .6;
-  background-image: linear-gradient(to bottom right, #3f89f1, #2059a8);
   display: block;
   position: absolute;
   top: 0;
@@ -671,6 +670,10 @@ body {
   justify-content: space-around;
   align-items: center;
   display: flex;
+}
+
+.play__img {
+  border-radius: 5px;
 }
 
 .play__info {
