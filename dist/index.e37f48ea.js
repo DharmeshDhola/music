@@ -535,87 +535,22 @@ function hmrAcceptRun(bundle, id) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _esRegexpFlagsJs = require("core-js/modules/es.regexp.flags.js");
 var _webImmediateJs = require("core-js/modules/web.immediate.js");
+var _modelJs = require("./model.js");
+var _searchMusicViewJs = require("./views/searchMusicView.js");
+var _searchMusicViewJsDefault = parcelHelpers.interopDefault(_searchMusicViewJs);
+var _songViewJs = require("./views/songView.js");
+var _songViewJsDefault = parcelHelpers.interopDefault(_songViewJs);
 var _runtime = require("regenerator-runtime/runtime");
-var _iconsSvg = require("url:../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-var _arrowPreviousLeftIconSvg = require("../img/arrow-previous-left-icon.svg");
-var _arrowPreviousLeftIconSvgDefault = parcelHelpers.interopDefault(_arrowPreviousLeftIconSvg);
-var _arrowNextRightIconSvg = require("../img/arrow-next-right-icon.svg");
-var _arrowNextRightIconSvgDefault = parcelHelpers.interopDefault(_arrowNextRightIconSvg);
-var _playSvgrepoComSvg = require("../img/play-svgrepo-com.svg");
-var _playSvgrepoComSvgDefault = parcelHelpers.interopDefault(_playSvgrepoComSvg);
-var _musicPlayerPauseButtonSvgrepoComSvg = require("../img/music-player-pause-button-svgrepo-com.svg");
-var _musicPlayerPauseButtonSvgrepoComSvgDefault = parcelHelpers.interopDefault(_musicPlayerPauseButtonSvgrepoComSvg);
-var _config = require("./config");
 var _regeneratorRuntime = require("regenerator-runtime");
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
-const state = {
-    search: {
-        query: "",
-        results: []
-    }
-};
 const searchBtn = document.querySelector(".search");
-const searchResult = document.querySelector(".results");
-const viewSongs = document.querySelector(".recipe");
-const loadSpinner = function(parantEl) {
-    const markup = `
-      <div class="spinner">
-        <svg>
-          <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
-        </svg>
-      </div>
-  `;
-    parantEl.innerHTML = "";
-    parantEl.insertAdjacentHTML("afterbegin", markup);
-};
-const loadSearchSong = async function(query) {
+const controllerMusic = async function(query) {
     try {
-        loadSpinner(searchResult);
-        state.search.query = query;
-        const options = {
-            headers: {
-                "X-RapidAPI-Key": `${(0, _config.API_KEY)}`
-            }
-        };
-        const res = await fetch(`https://deezerdevs-deezer.p.rapidapi.com/search?q=${query}`, options);
-        const data = await res.json();
-        if (data.error) throw new Error("Something want worng! please try again.");
-        console.log(data);
-        state.search.results = data.data.map((data)=>{
-            return {
-                id: data.id,
-                name: data.artist.name,
-                title: data.album.title,
-                imageMedium: data.album.cover_medium,
-                preview: data.preview,
-                imageXl: data.album.cover_xl,
-                pictureMedium: data.artist.picture_medium
-            };
-        });
-        const markup = state.search.results.map((data)=>{
-            return `
-          <li class="preview">
-            <a class="preview__link preview__link--active" href="#${data.id}">
-              <figure class="preview__fig">
-                <img src="${data.imageMedium}" alt="${data.title}" />
-              </figure>
-              <div class="preview__data">
-                <h4 class="preview__title">${data.title}</h4>
-                <p class="preview__publisher">${data.name}</p>
-              </div>
-            </a>
-          </li>
-      `;
-        }).join("");
-        searchResult.innerHTML = "";
-        searchResult.insertAdjacentHTML("afterbegin", markup);
+        // Load Spinner
+        (0, _searchMusicViewJsDefault.default).loadSpinner();
+        // Load Song
+        await _modelJs.loadMusic("sia");
+        // Render Search Result
+        (0, _searchMusicViewJsDefault.default).render(_modelJs.state.search.results);
     } catch (err) {
         console.error(err);
     }
@@ -623,106 +558,18 @@ const loadSearchSong = async function(query) {
 const clearField = function(parantEl) {
     parantEl.value = "";
 };
-const hello = function() {
-    const id = +window.location.hash.slice(1);
-    console.log(id);
-    const data = state.search.results.find((data)=>data.id === id);
-    console.log(data);
-    const html = `
-  <figure class="recipe__fig">
-    <img src="${data.imageXl}" alt="Tomato" class="recipe__img" />
-    <h1 class="recipe__title">
-      <span>${data.title}</span>
-    </h1>
-  </figure>
-
-  <div class="recipe__details">
-    <div>
-      <h1>Good Morning</h1>
-      <div class="recipe__info">
-        <svg class="recipe__info-icon">
-          <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
-        </svg>
-        <span class="recipe__info-data recipe__info-data--minutes"
-          >12:00 <span>AM</span></span
-        >
-      </div>
-    </div>
-
-    <div class="recipe__user-generated">
-      <svg>
-        <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
-      </svg>
-    </div>
-    <button class="btn--round">
-      <svg class="">
-        <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
-      </svg>
-    </button>
-  </div>
-
-  <div class="play__track">
-    <div class="play__track__btn">
-      <img
-        class="play__track__img"
-        src="${(0, _arrowPreviousLeftIconSvgDefault.default)}"
-        alt=""
-      />
-      <img
-        class="play__track__img"
-        src="${(0, _musicPlayerPauseButtonSvgrepoComSvgDefault.default)}"
-        alt=""
-      />
-      <img
-        class="play__track__img"
-        src="${(0, _arrowNextRightIconSvgDefault.default)}"
-        alt=""
-      />
-    </div>
-  </div>
-
-  <div class="play">
-    <div class="play__album">
-      <div class="play__imgbox">
-        <img class="play__img" src="${data.pictureMedium}" alt="" width="200" />
-      </div>
-      <div class="play__info">
-        <div class="play__artist">
-          <h1 class="play__name">${data.name}</h1>
-          <p class="play__title">Album by ${data.name}</p>
-          <p class="play__discription">
-            Want better recommendation? Pick some music you like.
-          </p>
-        </div>
-
-        <a
-          style="width: 150px"
-          class="btn--small recipe__btn"
-          href="http://thepioneerwoman.com/cooking/pasta-with-tomato-cream-sauce/"
-          target="_blank"
-        >
-          <span>Album</span>
-          <svg class="search__icon">
-            <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-  </div>
-`;
-    viewSongs.innerHTML = "";
-    viewSongs.insertAdjacentHTML("afterbegin", html);
+const controllerRenderMusic = function() {
+    (0, _songViewJsDefault.default).render(_modelJs.state.search.results);
 };
 searchBtn.addEventListener("submit", function(e) {
     e.preventDefault();
     let searchQuery = document.querySelector(".search__field");
-    loadSearchSong(searchQuery.value);
+    controllerMusic(searchQuery.value);
     clearField(searchQuery);
 });
-window.addEventListener("hashchange", hello);
+window.addEventListener("hashchange", controllerRenderMusic);
 
-},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","url:../img/icons.svg":"loVOp","../img/arrow-previous-left-icon.svg":"firaa","../img/arrow-next-right-icon.svg":"lHNOT","../img/play-svgrepo-com.svg":"32hcy","./config":"k5Hzs","regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../img/music-player-pause-button-svgrepo-com.svg":"5Zqh4"}],"gSXXb":[function(require,module,exports) {
+},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/searchMusicView.js":"gqXdh","./views/songView.js":"2WOXd","regenerator-runtime/runtime":"dXNgZ","regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gSXXb":[function(require,module,exports) {
 var global = require("../internals/global");
 var DESCRIPTORS = require("../internals/descriptors");
 var defineBuiltInAccessor = require("../internals/define-built-in-accessor");
@@ -1929,7 +1776,48 @@ $({
     setImmediate: setImmediate
 });
 
-},{"../internals/export":"dIGt4","../internals/global":"i8HOC","../internals/task":"7jDg7"}],"dXNgZ":[function(require,module,exports) {
+},{"../internals/export":"dIGt4","../internals/global":"i8HOC","../internals/task":"7jDg7"}],"Y4A21":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state);
+parcelHelpers.export(exports, "loadMusic", ()=>loadMusic);
+var _regeneratorRuntime = require("regenerator-runtime");
+var _config = require("./config");
+const state = {
+    search: {
+        query: "",
+        results: []
+    }
+};
+const loadMusic = async function(query) {
+    try {
+        state.search.query = query;
+        const options = {
+            headers: {
+                "X-RapidAPI-Key": `${(0, _config.API_KEY)}`
+            }
+        };
+        const res = await fetch(`https://deezerdevs-deezer.p.rapidapi.com/search?q=${query}`, options);
+        const data = await res.json();
+        if (data.error) throw new Error("Something want worng! please try again.");
+        console.log(data);
+        state.search.results = data.data.map((data)=>{
+            return {
+                id: data.id,
+                name: data.artist.name,
+                title: data.album.title,
+                imageMedium: data.album.cover_medium,
+                preview: data.preview,
+                imageXl: data.album.cover_xl,
+                pictureMedium: data.artist.picture_medium
+            };
+        });
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+},{"regenerator-runtime":"dXNgZ","./config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dXNgZ":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -2512,7 +2400,103 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"loVOp":[function(require,module,exports) {
+},{}],"k5Hzs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_KEY", ()=>API_KEY);
+const API_KEY = "5feefb9bb7msh3a72f494ab9c76fp175dd7jsnd2910d70b346";
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, "__esModule", {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === "default" || key === "__esModule" || dest.hasOwnProperty(key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"gqXdh":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _musicView = require("./musicView");
+var _musicViewDefault = parcelHelpers.interopDefault(_musicView);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class SearchMusicView extends (0, _musicViewDefault.default) {
+    _parentEl = document.querySelector(".results");
+    _generateMarkup() {
+        return this._data.map(this._getGenerateMarkup).join("");
+    }
+    _getGenerateMarkup(data) {
+        return `
+          <li class="preview">
+            <a class="preview__link preview__link--active" href="#${data.id}">
+              <figure class="preview__fig">
+                <img src="${data.imageMedium}" alt="${data.title}" />
+              </figure>
+              <div class="preview__data">
+                <h4 class="preview__title">${data.title}</h4>
+                <p class="preview__publisher">${data.name}</p>
+              </div>
+            </a>
+          </li>
+      `;
+    }
+}
+exports.default = new SearchMusicView();
+
+},{"./musicView":"1fyUX","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1fyUX":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class MusicView {
+    _data;
+    render(data) {
+        this._data = data;
+        this.clear();
+        const markup = this._generateMarkup();
+        this._parentEl.insertAdjacentHTML("afterbegin", markup);
+    }
+    clear() {
+        this._parentEl.innerHTML = "";
+    }
+    loadSpinner() {
+        const markup = `
+        <div class="spinner">
+            <svg>
+                <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
+            </svg>
+        </div>
+   `;
+        this._parentEl.innerHTML = "";
+        this._parentEl.insertAdjacentHTML("afterbegin", markup);
+    }
+}
+exports.default = MusicView;
+
+},{"url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"loVOp":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "icons.dfd7a6db.svg" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}],"lgJ39":[function(require,module,exports) {
@@ -2549,53 +2533,121 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"firaa":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "arrow-previous-left-icon.418a5196.svg" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"lHNOT":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "arrow-next-right-icon.38c89ba1.svg" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"32hcy":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "play-svgrepo-com.a0eaa6de.svg" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"k5Hzs":[function(require,module,exports) {
+},{}],"2WOXd":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "API_KEY", ()=>API_KEY);
-const API_KEY = "5feefb9bb7msh3a72f494ab9c76fp175dd7jsnd2910d70b346";
+var _musicView = require("./musicView");
+var _musicViewDefault = parcelHelpers.interopDefault(_musicView);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+var _arrowLeftIconSvg = require("../../img/arrow-left-icon.svg");
+var _arrowLeftIconSvgDefault = parcelHelpers.interopDefault(_arrowLeftIconSvg);
+var _arrowRightIconSvg = require("../../img/arrow-right-icon.svg");
+var _arrowRightIconSvgDefault = parcelHelpers.interopDefault(_arrowRightIconSvg);
+var _pauseIconSvg = require("../../img/pause-icon.svg");
+var _pauseIconSvgDefault = parcelHelpers.interopDefault(_pauseIconSvg);
+class SongView extends (0, _musicViewDefault.default) {
+    _id;
+    _preview;
+    _parentEl = document.querySelector(".recipe");
+    _generateMarkup() {
+        this._id = +window.location.hash.slice(1);
+        this._preview = this._data.find((data)=>data.id === this._id);
+        return `
+    <figure class="recipe__fig">
+        <img src="${this._preview.imageXl}" alt="Tomato" class="recipe__img" />
+        <h1 class="recipe__title">
+        <span>${this._preview.title}</span>
+        </h1>
+    </figure>
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, "__esModule", {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === "default" || key === "__esModule" || dest.hasOwnProperty(key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
+    <div class="recipe__details">
+        <div>
+        <h1>Good Morning</h1>
+        <div class="recipe__info">
+            <svg class="recipe__info-icon">
+            <use href="${0, _iconsSvgDefault.default}#icon-clock"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--minutes"
+            >12:00 <span>AM</span></span
+            >
+        </div>
+        </div>
 
-},{}],"5Zqh4":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "music-player-pause-button-svgrepo-com.5f5401e3.svg" + "?" + Date.now();
+        <div class="recipe__user-generated">
+        <svg>
+            <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
+        </svg>
+        </div>
+        <button class="btn--round">
+        <svg class="">
+            <use href="${0, _iconsSvgDefault.default}#icon-bookmark-fill"></use>
+        </svg>
+        </button>
+    </div>
+
+    <div class="play__track">
+        <div class="play__track__btn">
+        <img
+            class="play__track__img"
+            src="${0, _arrowLeftIconSvgDefault.default}"
+            alt=""
+        />
+        <img
+            class="play__track__img"
+            src="${0, _pauseIconSvgDefault.default}"
+            alt=""
+        />
+        <img
+            class="play__track__img"
+            src="${0, _arrowRightIconSvgDefault.default}"
+            alt=""
+        />
+        </div>
+    </div>
+
+    <div class="play">
+        <div class="play__album">
+        <div class="play__imgbox">
+            <img class="play__img" src="${this._preview.pictureMedium}" alt="" width="200" />
+        </div>
+        <div class="play__info">
+            <div class="play__artist">
+            <h1 class="play__name">${this._preview.name}</h1>
+            <p class="play__title">Album by ${this._preview.name}</p>
+            <p class="play__discription">
+                Want better recommendation? Pick some music you like.
+            </p>
+            </div>
+
+            <a
+            style="width: 150px"
+            class="btn--small recipe__btn"
+            href="http://thepioneerwoman.com/cooking/pasta-with-tomato-cream-sauce/"
+            target="_blank"
+            >
+            <span>Album</span>
+            <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+            </svg>
+            </a>
+        </div>
+        </div>
+    </div>
+    </div>
+    `;
+    }
+}
+exports.default = new SongView();
+
+},{"./musicView":"1fyUX","url:../../img/icons.svg":"loVOp","../../img/arrow-left-icon.svg":"8eYH4","../../img/arrow-right-icon.svg":"e33EC","../../img/pause-icon.svg":"lXPRM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8eYH4":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "arrow-left-icon.83fc18e3.svg" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"e33EC":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "arrow-right-icon.115f0a00.svg" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"lXPRM":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("hWUTQ") + "pause-icon.47fa6502.svg" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["fA0o9","aenu9"], "aenu9", "parcelRequire1f3a")
 
